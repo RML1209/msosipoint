@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Msosi Point - Ladha Halisi ya Nyumbani</title>
+
+  <!-- Font Awesome (icons) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="" crossorigin="anonymous" />
+
+  <!-- Optional: Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== Reset & Base ===== */
+    :root{
+      --accent: #ff5722;
+      --accent-dark: #e64a19;
+      --bg: #000;
+      --muted: #cfcfcf;
+      --glass: rgba(255,255,255,0.08);
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background:var(--bg);
+      color:#fff;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      overflow-x:hidden;
+      line-height:1.4;
+    }
+    a{color:inherit;text-decoration:none}
+    img{display:block;max-width:100%}
+
+    /* ===== Background Slideshow ===== */
+    .background-slideshow{
+      position:fixed;inset:0;height:100vh;width:100%;z-index:-3;overflow:hidden;
+      background:linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.5));
+    }
+    .background-slideshow img{
+      position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+      opacity:0;transition:opacity 1.2s ease-in-out, transform 1.2s ease;
+      transform:scale(1.03);
+      will-change: opacity, transform;
+      pointer-events:none;
+    }
+    .background-slideshow img.active{opacity:1;transform:scale(1);}
+
+    /* Dark overlay (subtle) */
+    .overlay{
+      position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:-2;
+    }
+
+    /* ===== Top Bar (logo + search) ===== */
+    .top-bar{
+      position:fixed;top:18px;right:20px;left:20px;display:flex;justify-content:flex-end;gap:18px;align-items:center;
+      z-index:1000;
+    }
+
+    .logo-group{display:flex;align-items:center;gap:12px;justify-content:flex-end}
+    .logo{
+      width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+      background:linear-gradient(135deg,var(--accent),#ff9800);box-shadow:0 6px 20px rgba(0,0,0,0.6);
+      flex-shrink:0;
+    }
+    .logo i{font-size:22px;color:#fff}
+
+    .site-title{
+      font-weight:800;font-size:1.15rem;letter-spacing:2px;color:#fff;text-transform:uppercase;
+      text-shadow:0 2px 12px rgba(0,0,0,0.6);
+      white-space:nowrap;
+    }
+
+    /* Search box responsive */
+    .search-container{display:flex;align-items:center;gap:10px;width:90%;}
+    .search-box{
+      display:flex;align-items:center;gap:10px;padding:8px 14px;border-radius:999px;
+      background:var(--glass);backdrop-filter: blur(6px);border:1px solid rgba(255,255,255,0.08);
+      width:min(420px, 60vw);max-width:100%;
+      transition:box-shadow .2s, border-color .2s, transform .15s;
+    }
+    .search-box:focus-within{box-shadow:0 6px 24px rgba(0,0,0,0.6);border-color:rgba(255,87,34,0.18)}
+    .search-box input{
+      background:transparent;border:0;outline:0;color:#fff;font-size:0.95rem;width:100%;
+    }
+    .search-box input::placeholder{color:rgba(255,255,255,0.7)}
+    .search-box .fa-search{color:var(--accent);font-size:1rem}
+
+    /* ===== Main content (center) ===== */
+    .content-overlay{
+      position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      padding:90px 20px 120px; /* padding-top leaves space for fixed top bar */
+      text-align:center;
+    }
+
+    .hero-title{
+      font-size:clamp(2.1rem, 6vw, 4.8rem);
+      font-weight:800;letter-spacing:3px;margin-bottom:0.25em;
+      text-shadow:0 6px 18px rgba(0,0,0,0.6);
+    }
+    .hero-sub{
+      font-size:clamp(1rem,2.2vw,1.7rem);font-weight:400;margin-bottom:28px;color:var(--muted);
+      max-width:920px;
+    }
+
+    .cta-group{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+    .btn{
+      display:inline-flex;align-items:center;gap:10px;padding:12px 22px;border-radius:999px;font-weight:700;font-size:1rem;
+      cursor:pointer;border:0;transition:transform .18s, box-shadow .18s, background .18s;
+    }
+    .btn:active{transform:translateY(1px)}
+    .btn.primary{background:linear-gradient(90deg,var(--accent),#ff8a50);color:#fff;box-shadow:0 8px 28px rgba(255,87,34,0.18)}
+    .btn.primary:hover{background:var(--accent-dark);box-shadow:0 12px 40px rgba(230,74,25,0.18)}
+    .btn.secondary{background:transparent;border:1.5px solid rgba(255,255,255,0.12);color:#fff}
+
+    .info-strip{
+      margin-top:20px;background:rgba(0,0,0,0.5);padding:10px 16px;border-radius:8px;font-size:0.95rem;color:var(--muted);
+      display:inline-flex;gap:10px;align-items:center;border:1px solid rgba(255,255,255,0.03)
+    }
+
+    /* ===== Slideshow controls (desktop) ===== */
+    .slideshow-controls{
+      position:fixed;left:18px;top:50%;transform:translateY(-50%);z-index:900;display:flex;flex-direction:column;gap:10px;
+    }
+    .control-btn{width:42px;height:42px;border-radius:8px;background:rgba(0,0,0,0.45);display:grid;place-items:center;border:1px solid rgba(255,255,255,0.04);cursor:pointer}
+    .control-btn i{font-size:18px;color:#fff}
+
+    /* ===== Footer ===== */
+    footer.site-footer{
+      position:relative;z-index:3;background:linear-gradient(180deg, rgba(0,0,0,0.6), #070707);color:var(--muted);
+      padding:56px 20px;display:flex;gap:20px;justify-content:space-between;flex-wrap:wrap;
+      align-items:flex-start;
+    }
+    .footer-section{flex:1 1 220px;min-width:200px;margin-bottom:18px}
+    .site-footer h3{color:var(--accent);margin-bottom:10px}
+    .site-footer ul{list-style:none}
+    .site-footer li{margin-bottom:8px}
+    .social-icons{display:flex;gap:8px}
+    .social-icons a{display:inline-grid;place-items:center;width:40px;height:40px;border-radius:50%;background:#222;color:#fff}
+    .footer-bottom{width:100%;text-align:center;padding-top:18px;border-top:1px solid rgba(255,255,255,0.03);margin-top:8px;color:#999}
+
+    /* ===== Responsive tweaks ===== */
+    @media (max-width:900px){
+      .top-bar{justify-content:space-between;gap:8px}
+      .logo{width:48px;height:48px}
+      .site-title{font-size:0.95rem}
+      .search-box{width:min(380px,70vw)}
+      .slideshow-controls{left:10px}
+      .content-overlay{padding-top:80px}
+    }
+    @media (max-width:600px){
+      .top-bar{gap:10px;padding-inline:10px}
+      .logo{width:44px;height:44px}
+      .site-title{display:none} /* conserve space on very small screens */
+      .search-box{width:85vw}
+      .hero-sub{font-size:1rem;padding-inline:8px}
+      .slideshow-controls{display:none} /* hide desktop-only controls */
+      footer.site-footer{padding:28px 14px}
+    }
+
+    /* Small helper */
+    .visually-hidden{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap}
+  </style>
+</head>
+<body>
+
+  <!-- Background slideshow: use real image paths (picha1.jpg etc). Add loading="lazy" -->
+  <div class="background-slideshow" aria-hidden="true">
+    <img src="picha1.jpg" alt="Msosi sahani 1" class="slide active" loading="lazy">
+    <img src="picha2.jpg" alt="Msosi sahani 2" class="slide" loading="lazy">
+    <img src="picha3.jpg" alt="Msosi sahani 3" class="slide" loading="lazy">
+    <!-- add more images if needed -->
+  </div>
+
+  <div class="overlay" aria-hidden="true"></div>
+
+  <!-- Top bar: logo + search -->
+  <header class="top-bar" role="banner">
+    <div class="logo-group" aria-hidden="false">
+      <div class="logo" aria-hidden="true"><i class="fas fa-pepper-hot" aria-hidden="true"></i></div>
+      <div class="site-title" title="Msosi Point">MSOSI POINT</div>
+    </div>
+
+    <div class="search-container" role="search" aria-label="Tafuta menyu">
+      <form class="search-box" id="searchForm" onsubmit="event.preventDefault(); handleSearch();">
+        <input id="searchInput" type="search" placeholder="Tafuta menyu, chakula..." aria-label="Tafuta" />
+        <i class="fas fa-search" aria-hidden="true"></i>
+      </form>
+    </div>
+  </header>
+
+  <!-- Slideshow controls for desktop -->
+  <div class="slideshow-controls" aria-hidden="false">
+    <button class="control-btn" id="prevBtn" title="Previous slide" aria-label="Previous slide"><i class="fas fa-chevron-left"></i></button>
+    <button class="control-btn" id="nextBtn" title="Next slide" aria-label="Next slide"><i class="fas fa-chevron-right"></i></button>
+  </div>
+
+  <!-- Main hero content -->
+  <main class="content-overlay" id="home">
+    <h1 class="hero-title">Msosi Point</h1>
+    <p class="hero-sub">Ladha Halisi • Harufu ya Nyumbani • Kila Sahani ni Hadithi</p>
+
+    <div class="cta-group" role="navigation" aria-label="Actions">
+      <a class="btn primary" href="#menu" id="viewMenuBtn"><i class="fas fa-utensils"></i> Angalia Menyu</a>
+      <a class="btn secondary" href="tel:+255768174044"><i class="fas fa-phone"></i> Piga Simu Sasa</a>
+    </div>
+
+    <div class="info-strip" aria-live="polite">
+      <span>Mtaa wa Uhuru, Kariakoo, Dar es Salaam</span>
+      <span> | </span>
+      <span>+255 768 174 044</span>
+      <span> | </span>
+      <span>Open: 8:00 - 23:00</span>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="footer-section contact-info">
+      <h3>Wasiliana Nasi</h3>
+      <p>Mtaa wa Uhuru, Kariakoo</p>
+      <p><a href="tel:+255713000000">+255 713 000 000</a></p>
+      <p><a href="mailto:info@msosipoint.co.tz">info@msosipoint.co.tz</a></p>
+    </div>
+
+    <div class="footer-section quick-links">
+      <h3>Viungo vya Haraka</h3>
+      <ul>
+        <li><a href="#home">Nyumbani</a></li>
+        <li><a href="#menu">Menyu</a></li>
+        <li><a href="#catering">Catering</a></li>
+        <li><a href="#book">Weka Nafasi</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-section social-media">
+      <h3>Tufuate</h3>
+      <div class="social-icons" role="navigation" aria-label="Social media">
+        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="#" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+      </div>
+    </div>
+
+    <div class="footer-section">
+      <h3>Kazi na Siku</h3>
+      <p>Open: Mon - Sun, 8:00 - 23:00</p>
+    </div>
+
+    <div class="footer-bottom" style="width:100%;">
+      <p>&copy; <span id="year"></span> Msosi Point. Haki zote zimehifadhiwa.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    // Set year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Slideshow logic with controls, pause-on-hover, keyboard nav
+    (function(){
+      const slides = Array.from(document.querySelectorAll('.background-slideshow img'));
+      if(!slides.length) return;
+
+      let current = slides.findIndex(s => s.classList.contains('active'));
+      if(current < 0) current = 0;
+      let interval = null;
+      const INTERVAL_MS = 5000;
+
+      const next = () => {
+        slides[current].classList.remove('active');
+        current = (current + 1) % slides.length;
+        slides[current].classList.add('active');
+      };
+      const prev = () => {
+        slides[current].classList.remove('active');
+        current = (current - 1 + slides.length) % slides.length;
+        slides[current].classList.add('active');
+      };
+
+      // Auto play
+      function startAuto(){ stopAuto(); interval = setInterval(next, INTERVAL_MS); }
+      function stopAuto(){ if(interval) { clearInterval(interval); interval = null; } }
+
+      // Controls
+      const nextBtn = document.getElementById('nextBtn');
+      const prevBtn = document.getElementById('prevBtn');
+      nextBtn && nextBtn.addEventListener('click', () => { next(); startAuto(); });
+      prevBtn && prevBtn.addEventListener('click', () => { prev(); startAuto(); });
+
+      // Pause on hover (desktop) & focus
+      const bg = document.querySelector('.background-slideshow');
+      [bg, ...slides].forEach(el => {
+        el.addEventListener('mouseenter', stopAuto);
+        el.addEventListener('mouseleave', startAuto);
+      });
+
+      // Keyboard navigation (left/right)
+      window.addEventListener('keydown', (e) => {
+        if(e.key === 'ArrowRight') { next(); startAuto(); }
+        if(e.key === 'ArrowLeft') { prev(); startAuto(); }
+      });
+
+      // Touch swipe support (basic)
+      let touchStartX = 0;
+      let touchEndX = 0;
+      bg.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; stopAuto(); }, {passive:true});
+      bg.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        const dx = touchEndX - touchStartX;
+        if(Math.abs(dx) > 40) { if(dx < 0) next(); else prev(); }
+        startAuto();
+      }, {passive:true});
+
+      // Start autoplay
+      startAuto();
+    })();
+
+    // Simple search handler (replace with actual search logic or link)
+    function handleSearch(){
+      const q = document.getElementById('searchInput').value.trim();
+      if(!q) {
+        // give quick feedback (could be a toast; keeping simple)
+        alert('Tafadhali andika neno la kutafuta (mfano: pilau, mchuzi...)');
+        return;
+      }
+      // For demo: redirect to #menu with query param (implement server-side if available)
+      const url = new URL(window.location.href);
+      url.hash = '#menu';
+      url.searchParams.set('q', q);
+      window.location.href = url.toString();
+    }
+
+    // Smooth scroll for internal links
+    (function(){
+      const internal = document.querySelectorAll('a[href^="#"]');
+      internal.forEach(a => {
+        a.addEventListener('click', (e) => {
+          const target = document.querySelector(a.getAttribute('href'));
+          if(target) {
+            e.preventDefault();
+            target.scrollIntoView({behavior:'smooth', block:'start'});
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
